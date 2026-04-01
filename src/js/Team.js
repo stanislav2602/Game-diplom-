@@ -27,14 +27,22 @@ export default class Team {
   }
 
   removeCharacter(character) {
-    const index = this.#characters.indexOf(character);
+    const index = this.#characters.findIndex(
+      (c) => c.type === character.type &&
+             c.level === character.level &&
+             c.health === character.health
+    );
     if (index !== -1) {
       this.#characters.splice(index, 1);
     }
   }
 
   has(character) {
-    return this.#characters.includes(character);
+    return this.#characters.some(
+      (c) => c.type === character.type &&
+             c.level === character.level &&
+             c.health === character.health
+    );
   }
 
   levelUp() {
