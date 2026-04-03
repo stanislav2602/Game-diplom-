@@ -11,57 +11,39 @@
  * team.characters // [swordsman, bowman]
  * ```
  * */
+/**
+ * Класс, представляющий персонажей команды
+ */
 export default class Team {
-  #characters = [];
+  #characters = new Set();
 
   constructor(characters = []) {
-    this.#characters = characters;
+    characters.forEach((char) => this.#characters.add(char));
   }
 
   get characters() {
-    return this.#characters;
+    return Array.from(this.#characters);
   }
 
   addCharacter(character) {
-    this.#characters.push(character);
+    this.#characters.add(character);
   }
 
   removeCharacter(character) {
-    const index = this.#characters.findIndex(
-      (c) => c.type === character.type &&
-             c.level === character.level &&
-             c.health === character.health
-    );
-    if (index !== -1) {
-      this.#characters.splice(index, 1);
-    }
+    this.#characters.delete(character);
   }
 
   has(character) {
-    return this.#characters.some(
-      (c) => c.type === character.type &&
-             c.level === character.level &&
-             c.health === character.health
-    );
+    return this.#characters.has(character);
   }
 
   levelUp() {
     this.#characters.forEach((character) => {
-      const healthPercent = character.health;
-      character.health = Math.min(character.health + 80, 100);
-      character.attack = Math.max(
-        character.attack,
-        Math.floor((character.attack * (80 + healthPercent)) / 100),
-      );
-      character.defence = Math.max(
-        character.defence,
-        Math.floor((character.defence * (80 + healthPercent)) / 100),
-      );
-      character.level = Math.min(character.level + 1, 4);
+      character.levelUp();
     });
   }
 
   isEmpty() {
-    return this.#characters.length === 0;
+    return this.#characters.size === 0;
   }
 }
