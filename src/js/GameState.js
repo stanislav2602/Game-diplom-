@@ -36,55 +36,58 @@ export default class GameState {
       vampire: Vampire,
     };
 
+    let playerCharacters = [];
+    if (object.playerTeam && object.playerTeam.characters) {
+      playerCharacters = object.playerTeam.characters.map((charData) => {
+        const CharacterClass = characterMap[charData.type];
+        const character = new CharacterClass(charData.level ?? 1);
+        character.attack = charData.attack ?? 0;
+        character.defence = charData.defence ?? 0;
+        character.health = charData.health ?? 50;
+        return character;
+      });
+    }
+    state.playerTeam = new Team(playerCharacters);
+
+    let computerCharacters = [];
+    if (object.computerTeam && object.computerTeam.characters) {
+      computerCharacters = object.computerTeam.characters.map((charData) => {
+        const CharacterClass = characterMap[charData.type];
+        const character = new CharacterClass(charData.level ?? 1);
+        character.attack = charData.attack ?? 0;
+        character.defence = charData.defence ?? 0;
+        character.health = charData.health ?? 50;
+        return character;
+      });
+    }
+    state.computerTeam = new Team(computerCharacters);
+
     state.positions = [];
     if (object.positions && Array.isArray(object.positions)) {
       for (const posData of object.positions) {
         if (posData && posData.character) {
-          const CharacterClass = characterMap[posData.character.type];
-          if (CharacterClass) {
-            const character = new CharacterClass(posData.character.level ?? 1);
-            character.attack = posData.character.attack ?? 0;
-            character.defence = posData.character.defence ?? 0;
-            character.health = posData.character.health ?? 50;
+          // Ищем персонажа в командах по уникальным свойствам
+          let foundCharacter = null;
 
-            state.positions.push(new PositionedCharacter(character, posData.position ?? 0));
+          foundCharacter = state.playerTeam.characters.find(
+            (c) => c.type === posData.character.type &&
+                   c.level === posData.character.level &&
+                   c.health === posData.character.health
+          );
+
+          if (!foundCharacter) {
+            foundCharacter = state.computerTeam.characters.find(
+              (c) => c.type === posData.character.type &&
+                     c.level === posData.character.level &&
+                     c.health === posData.character.health
+            );
+          }
+          
+          if (foundCharacter) {
+            state.positions.push(new PositionedCharacter(foundCharacter, posData.position ?? 0));
           }
         }
       }
-    }
-
-    if (object.playerTeam && object.playerTeam.characters) {
-      const playerCharacters = [];
-      for (const charData of object.playerTeam.characters) {
-        if (charData && charData.type) {
-          const CharacterClass = characterMap[charData.type];
-          if (CharacterClass) {
-            const character = new CharacterClass(charData.level ?? 1);
-            character.attack = charData.attack ?? 0;
-            character.defence = charData.defence ?? 0;
-            character.health = charData.health ?? 50;
-            playerCharacters.push(character);
-          }
-        }
-      }
-      state.playerTeam = new Team(playerCharacters);
-    }
-
-    if (object.computerTeam && object.computerTeam.characters) {
-      const computerCharacters = [];
-      for (const charData of object.computerTeam.characters) {
-        if (charData && charData.type) {
-          const CharacterClass = characterMap[charData.type];
-          if (CharacterClass) {
-            const character = new CharacterClass(charData.level ?? 1);
-            character.attack = charData.attack ?? 0;
-            character.defence = charData.defence ?? 0;
-            character.health = charData.health ?? 50;
-            computerCharacters.push(character);
-          }
-        }
-      }
-      state.computerTeam = new Team(computerCharacters);
     }
 
     return state;

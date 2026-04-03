@@ -23,4 +23,18 @@ export default class Character {
     this.health = 50;
     this.type = type;
   }
+
+  levelUp() {
+    const healthPercent = this.health;
+    this.health = Math.min(this.health + 80, 100);
+    this.attack = Math.max(
+      this.attack,
+      Math.floor((this.attack * (80 + healthPercent)) / 100),
+    );
+    this.defence = Math.max(
+      this.defence,
+      Math.floor((this.defence * (80 + healthPercent)) / 100),
+    );
+    this.level = Math.min(this.level + 1, 4);
+  }
 }

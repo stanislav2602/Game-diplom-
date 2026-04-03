@@ -393,38 +393,38 @@ export default class GameController {
     return false;
   }
 
-  nextLevel() {
-    if (this.gameState.level >= MAX_LEVEL) {
-      this.gamePlay.constructor.showMessage('Поздравляем! Вы прошли игру!');
-      this.currentTurn = null;
-      this.gamePlay.setCursor(cursors.notallowed);
-      return;
-    }
-
-    this.gameState.level += 1;
-
-    const themesMap = {
-      1: 'prairie',
-      2: 'desert',
-      3: 'arctic',
-      4: 'mountain',
-    };
-
-    this.gameState.theme = themesMap[this.gameState.level] || 'mountain';
-
-    this.gameState.playerTeam.levelUp();
-
-    const computerTypes = [Daemon, Undead, Vampire];
-    const maxLevel = Math.min(this.gameState.level, MAX_LEVEL);
-    this.gameState.computerTeam = generateTeam(computerTypes, maxLevel, 2);
-
-    this.placeCharacters();
-    this.gamePlay.drawUi(this.gameState.theme);
-    this.redrawPositions();
-    this.clearSelection();
-    this.currentTurn = 'player';
-    this.gamePlay.setCursor(cursors.auto);
+nextLevel() {
+  if (this.gameState.level >= MAX_LEVEL) {
+    this.gamePlay.constructor.showMessage('Поздравляем! Вы прошли игру!');
+    this.currentTurn = null;
+    this.gamePlay.setCursor(cursors.notallowed);
+    return;
   }
+
+  this.gameState.level += 1;
+
+  const themesMap = {
+    1: 'prairie',
+    2: 'desert',
+    3: 'arctic',
+    4: 'mountain',
+  };
+
+  this.gameState.theme = themesMap[this.gameState.level] || 'mountain';
+
+  this.gameState.playerTeam.levelUp();
+
+  const computerTypes = [Daemon, Undead, Vampire];
+  const maxLevel = Math.min(this.gameState.level, MAX_LEVEL);
+  this.gameState.computerTeam = generateTeam(computerTypes, maxLevel, 2);
+
+  this.placeCharacters();
+  this.gamePlay.drawUi(this.gameState.theme);
+  this.redrawPositions();
+  this.clearSelection();
+  this.currentTurn = 'player';
+  this.gamePlay.setCursor(cursors.auto);
+}
 
   onCellEnter(index) {
     if (this.currentTurn !== 'player') {
