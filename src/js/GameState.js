@@ -66,7 +66,6 @@ export default class GameState {
     if (object.positions && Array.isArray(object.positions)) {
       for (const posData of object.positions) {
         if (posData && posData.character) {
-          // Ищем персонажа в командах по уникальным свойствам
           let foundCharacter = null;
 
           foundCharacter = state.playerTeam.characters.find(
